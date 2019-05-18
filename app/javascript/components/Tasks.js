@@ -7,8 +7,10 @@ class Tasks extends React.Component {
         super(props)
         this.state = {
             todos: [],
-            inputValue: ''
+            inputValue: '',
+            powerLevel: 10
         }
+        this.handleChange = this.handleChange.bind(this)
     }
 
     getTodos() {
@@ -21,14 +23,15 @@ class Tasks extends React.Component {
 
     createTodo = (e) => {
         if (e.key ==='Enter') {
-            axios.post(`/api/v1/todos`, {todo: {title: e.target.value}})
+            axios.post(`/api/v1/todos`, {todo: {title: this.state.inputValue, health: 100, power: this.state.powerLevel} })
             .then(response => {
                 const todos = update(this.state.todos, {
                     $splice: [[0, 0, response.data]]
                 })
             this.setState({
                 todos: todos,
-                inputValue: ''
+                inputValue: '',
+                powerLevel: 10
             })
         })
         .catch(error => console.log(error))
@@ -63,7 +66,9 @@ class Tasks extends React.Component {
     }
 
     handleChange = (e) => {
-        this.setState({inputValue: e.target.value});
+        this.setState({ 
+            [e.target.name]: e.target.value 
+        })
     }
 
     componentWillMount() {
@@ -74,9 +79,10 @@ class Tasks extends React.Component {
         return (
             <div>
                 <h1>Task Defender</h1>
-                <div className="inputContainer">
+                <form className="inputContainer">
+                    Task:
                     <input 
-                        className="taskInput" 
+                        name="inputValue"
                         type="text" 
                         placeholder="Spawn a task" 
                         maxLength="50" 
@@ -84,7 +90,16 @@ class Tasks extends React.Component {
                         value={this.state.inputValue} 
                         onChange={this.handleChange}
                     />
-                </div>
+                    Powerlevel: 
+                    <input
+                        name="powerLevel"
+                        type="text" 
+                        maxLength="10" 
+                        onKeyPress={this.createTodo}
+                        value={this.state.powerLevel} 
+                        onChange={this.handleChange}
+                    />
+                </form>
                 <div className="listWrapper">
                     <ul className="taskList">
                         {this.state.todos.map((todo) => {
@@ -97,6 +112,8 @@ class Tasks extends React.Component {
                                         onChange={(e) => this.updateTodo(e, todo.id)}
                                     />
                                     <label className="taskLabel">{todo.title}</label>
+                                    <h5 className="powerLabel">Powerlevel: {todo.power}</h5>
+                                    <h4 className="taskHealth">Health: {todo.health}%</h4>
                                     <span 
                                         className="deleteTaskBtn"
                                         onClick={(e) => this.deleteTodo(todo.id)}

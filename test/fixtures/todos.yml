@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  done: false
+  health: 1
+  power: 1
+
+two:
+  title: MyString
+  done: false
+  health: 1
+  power: 1

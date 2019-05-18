@@ -1,6 +1,7 @@
 {
   "name": "task-defender",
   "private": true,
+  "proxy": "http://localhost:3000",
   "dependencies": {
     "@babel/preset-react": "^7.0.0",
     "@rails/webpacker": "^4.0.2",

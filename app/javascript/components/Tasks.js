@@ -78,8 +78,8 @@ class Tasks extends React.Component {
                     <input 
                         className="taskInput" 
                         type="text" 
-                        placeholder="Spawn a task" m
-                        axLength="50" 
+                        placeholder="Spawn a task" 
+                        maxLength="50" 
                         onKeyPress={this.createTodo}
                         value={this.state.inputValue} 
                         onChange={this.handleChange}

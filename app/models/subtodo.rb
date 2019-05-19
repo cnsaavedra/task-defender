@@ -1,3 +1,3 @@
-class Subtodo < ApplicationRecord
+class SubTodo < ApplicationRecord
   belongs_to :todo
 end

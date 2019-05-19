@@ -9,7 +9,9 @@ class Tasks extends React.Component {
             todos: [],
             subtodos: [],
             inputValue: '',
+            subInputValue: '',
             powerLevel: 10,
+            subPowerLevel: 10,
             attackDmg: 10
         }
         this.handleChange = this.handleChange.bind(this)
@@ -19,6 +21,14 @@ class Tasks extends React.Component {
         axios.get('/api/v1/todos')
         .then(response => {
             this.setState({todos: response.data})
+        })
+        .catch(error => console.log(error))
+    }
+
+    getSubTodos() {
+        axios.get('/api/v1/subtodos')
+        .then(response => {
+            this.setState({subtodos: response.data})
         })
         .catch(error => console.log(error))
     }
@@ -40,17 +50,17 @@ class Tasks extends React.Component {
         }
     }
 
-    createSubTodo = (e) => {
+    createSubTodo = (e, id) => {
         if (e.key ==='Enter') {
-            axios.post(`/api/v1/subtodos`, {subtodo: {title: this.state.inputValue, health: 100, power: this.state.powerLevel} })
+            axios.post(`/api/v1/subtodos`, {subtodo: {todo_id: id, title: this.state.subInputValue, health: 100, power: this.state.subPowerLevel} })
             .then(response => {
                 const subtodos = update(this.state.subtodos, {
                     $splice: [[0, 0, response.data]]
                 })
             this.setState({
                 subtodos: subtodos,
-                inputValue: '',
-                powerLevel: 10
+                subInputValue: '',
+                subPowerLevel: 10
             })
         })
         .catch(error => console.log(error))
@@ -111,6 +121,7 @@ class Tasks extends React.Component {
 
     componentWillMount() {
         this.getTodos()
+        this.getSubTodos()
     }
 
     render() {
@@ -155,24 +166,56 @@ class Tasks extends React.Component {
                                     <form className="inputContainer">
                                         Task:
                                         <input 
-                                            name="inputValue"
+                                            name="subInputValue"
                                             type="text" 
                                             placeholder="Spawn a task" 
                                             maxLength="50" 
-                                            onKeyPress={this.createTodo}
-                                            value={this.state.inputValue} 
+                                            onKeyPress={this.createSubTodo(todo.id)}
+                                            value={this.state.subInputValue} 
                                             onChange={this.handleChange}
                                         />
                                         Powerlevel: 
                                         <input
-                                            name="powerLevel"
+                                            name="subPowerLevel"
                                             type="text" 
                                             maxLength="10" 
-                                            onKeyPress={this.createTodo}
-                                            value={this.state.powerLevel} 
+                                            onKeyPress={this.createSubTodo(todo.id)}
+                                            value={this.state.subPowerLevel} 
                                             onChange={this.handleChange}
                                         />
+                                        <button onClick={this.createSubTodo(todo.id)}>Add</button>
                                     </form>
+                                    <div className="listWrapper">
+                                        <ul className="taskList">
+                                            {this.state.subtodos.map((subtodo) => {
+                                                return(
+                                                    <li className="task" subtodo={subtodo} key={subtodo.id}>
+                                                        <input
+                                                            className="taskCheckbox" 
+                                                            type="checkbox" 
+                                                            checked={subtodo.done} 
+                                                            onChange={(e) => this.updateTodo(e, subtodo.id)}
+                                                        />
+                                                        <label className="taskLabel">{subtodo.title}</label>
+                                                        <h5 className="powerLabel">Powerlevel: {subtodo.power}</h5>
+                                                        <h4 className="taskHealth">Health: {subtodo.health}%</h4>
+                                                        <span 
+                                                            className="attackTaskBtn"
+                                                            onClick={(e) => this.deleteTodo(todo.id)}
+                                                        >
+                                                        Delete
+                                                        </span>
+                                                        <span 
+                                                            className="attackTaskBtn"
+                                                            onClick={(e) => this.attackTodo(todo.id, todo.health - this.state.attackDmg)}
+                                                        >
+                                                        Attack
+                                                        </span>
+                                                    </li>
+                                                )
+                                            })}
+                                        </ul>
+                                    </div>
                                     <span 
                                         className="attackTaskBtn"
                                         onClick={(e) => this.deleteTodo(todo.id)}

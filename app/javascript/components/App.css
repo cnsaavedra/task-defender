@@ -14,7 +14,7 @@ li.task {
 	border-bottom: 1px solid #ccc;
 }
 
-li.task:hover .deleteTaskBtn {
+li.task:hover .attackTaskBtn {
 	visibility: visible;
 	opacity: 1;
 }
@@ -95,7 +95,7 @@ input[placeholder] {
 	overflow: auto;
 }
 
-.deleteTaskBtn {
+.attackTaskBtn {
 	float: right;
 	color: red;
 	background: rgba(0,0,0,0);
@@ -103,7 +103,6 @@ input[placeholder] {
 	font-weight: bold;
 	border: 1px solid white;
 	border-radius: 50%;
-	padding: 10px 5px;
 	visibility: hidden;
 	opacity: 0;
 	line-height: 0;

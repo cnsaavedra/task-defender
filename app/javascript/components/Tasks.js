@@ -8,7 +8,8 @@ class Tasks extends React.Component {
         this.state = {
             todos: [],
             inputValue: '',
-            powerLevel: 10
+            powerLevel: 10,
+            attackDmg: 10
         }
         this.handleChange = this.handleChange.bind(this)
     }
@@ -51,6 +52,20 @@ class Tasks extends React.Component {
         }).catch(error => console.log(error))
     }
 
+    attackTodo = (id, dmg) => {
+        axios.put(`/api/v1/todos/${id}`, {todo: {health: dmg}})
+        .then(response => {
+            const todoIndex = this.state.todos.findIndex(x => x.id === response.data.id)
+            const todos = update(this.state.todos, {
+                [todoIndex]: {$set: response.data}
+            })
+            this.setState({
+                todos: todos
+            })
+        })
+        .catch(error => console.log(error))
+    }
+
     deleteTodo = (id) => {
         axios.delete(`/api/v1/todos/${id}`)
         .then(response => {
@@ -64,6 +79,7 @@ class Tasks extends React.Component {
         })
         .catch(error => console.log(error))
     }
+
 
     handleChange = (e) => {
         this.setState({ 
@@ -115,10 +131,16 @@ class Tasks extends React.Component {
                                     <h5 className="powerLabel">Powerlevel: {todo.power}</h5>
                                     <h4 className="taskHealth">Health: {todo.health}%</h4>
                                     <span 
-                                        className="deleteTaskBtn"
-                                        onClick={(e) => this.deleteTodo(todo.id)}
+                                        className="attackTaskBtn"
+                                        onClick={(e) => this.deleteTodo(todo.id, 10)}
                                     >
-                                    x
+                                    Delete
+                                    </span>
+                                    <span 
+                                        className="attackTaskBtn"
+                                        onClick={(e) => this.attackTodo(todo.id, todo.health - this.state.attackDmg)}
+                                    >
+                                    Attack
                                     </span>
                                 </li>
                             )

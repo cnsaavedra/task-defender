@@ -7,6 +7,7 @@ class Tasks extends React.Component {
         super(props)
         this.state = {
             todos: [],
+            subtodos: [],
             inputValue: '',
             powerLevel: 10,
             attackDmg: 10
@@ -31,6 +32,23 @@ class Tasks extends React.Component {
                 })
             this.setState({
                 todos: todos,
+                inputValue: '',
+                powerLevel: 10
+            })
+        })
+        .catch(error => console.log(error))
+        }
+    }
+
+    createSubTodo = (e) => {
+        if (e.key ==='Enter') {
+            axios.post(`/api/v1/subtodos`, {subtodo: {title: this.state.inputValue, health: 100, power: this.state.powerLevel} })
+            .then(response => {
+                const subtodos = update(this.state.subtodos, {
+                    $splice: [[0, 0, response.data]]
+                })
+            this.setState({
+                subtodos: subtodos,
                 inputValue: '',
                 powerLevel: 10
             })
@@ -134,6 +152,27 @@ class Tasks extends React.Component {
                                     <label className="taskLabel">{todo.title}</label>
                                     <h5 className="powerLabel">Powerlevel: {todo.power}</h5>
                                     <h4 className="taskHealth">Health: {todo.health}%</h4>
+                                    <form className="inputContainer">
+                                        Task:
+                                        <input 
+                                            name="inputValue"
+                                            type="text" 
+                                            placeholder="Spawn a task" 
+                                            maxLength="50" 
+                                            onKeyPress={this.createTodo}
+                                            value={this.state.inputValue} 
+                                            onChange={this.handleChange}
+                                        />
+                                        Powerlevel: 
+                                        <input
+                                            name="powerLevel"
+                                            type="text" 
+                                            maxLength="10" 
+                                            onKeyPress={this.createTodo}
+                                            value={this.state.powerLevel} 
+                                            onChange={this.handleChange}
+                                        />
+                                    </form>
                                     <span 
                                         className="attackTaskBtn"
                                         onClick={(e) => this.deleteTodo(todo.id)}

@@ -56,9 +56,13 @@ class Tasks extends React.Component {
         axios.put(`/api/v1/todos/${id}`, {todo: {health: dmg}})
         .then(response => {
             const todoIndex = this.state.todos.findIndex(x => x.id === response.data.id)
-            const todos = update(this.state.todos, {
+            let todos = update(this.state.todos, {
                 [todoIndex]: {$set: response.data}
             })
+            console.log(this.state.todos[todoIndex].health - 10)
+            if(this.state.todos[todoIndex].health - 10 <= 0){
+                this.deleteTodo(this.state.todos[todoIndex].id)
+            }
             this.setState({
                 todos: todos
             })
@@ -132,7 +136,7 @@ class Tasks extends React.Component {
                                     <h4 className="taskHealth">Health: {todo.health}%</h4>
                                     <span 
                                         className="attackTaskBtn"
-                                        onClick={(e) => this.deleteTodo(todo.id, 10)}
+                                        onClick={(e) => this.deleteTodo(todo.id)}
                                     >
                                     Delete
                                     </span>
